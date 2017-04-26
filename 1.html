@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			table,td,tr{
+				border: 1px solid black;
+			}
+			td{width: 15px;height: 15px;}
+			.red{background-color: red;}
+			.food{background-color: yellow;}
+		</style>
+	</head>
+	<body>
+		<table id="table"></table>
+		<script type="text/javascript">
+			var tabel = document.getElementById("table");
+			var maxTap = 20;
+			var tbs = [];
+			for (var i = 0; i < maxTap; i++) {
+					var taTr = document.createElement("tr");
+					var thiswib = []	
+					for (var j = 0; j < maxTap; j++) {
+						var taTd = document.createElement("td")
+						taTr.appendChild(taTd)//把创建td的内容放到tr里
+						thiswib.push(taTd)//把创建td装到tr的数组里
+					}
+					tbs.push(thiswib)//把td,tr装到tbs的数组里
+					tabel.appendChild(taTr)	
+			}
+				console.log(tbs)
+				function Snake(){
+					
+					this.q = parseInt(Math.random()*19)
+					this.k = parseInt(Math.random()*19)
+					//蛇身体坐标
+					this.bodyArr = [
+						{x:this.q,y:this.k},
+						{x:this.q,y:this.k-1},
+					];
+
+					//蛇身渲染
+					this.hua();
+					this.dong();
+					//绑定事件
+					this.anjian();
+					this.jian = "right";
+					//出现一个小块
+					this.add()
+				}
+				//渲染
+				Snake.prototype.hua = function(){
+						for(var i = 0; i < maxTap; i++){
+							for(var j = 0; j < maxTap; j++){
+								//移动一位清空这个盒子
+							tbs[i][j].className = "";
+							}	
+						}
+					//画蛇   便利的方式得到蛇的身体
+					for(var i = 0; i < this.bodyArr.length; i++){
+						tbs[this.bodyArr[i].x][this.bodyArr[i].y].className = "red";
+					}	
+				}
+				//蛇的更新
+				Snake.prototype.dong = function(){
+					this.bodyArr.pop();//删除尾巴
+					this.add();//头部添加
+					//当食物和生的身体相撞的时候执行跳出食物和添加食物
+					if(this.bodyArr[0].x == food.l && this.bodyArr[0].y==food.t){
+						food.chang();
+						this.add();
+					}
+					if(this.bodyArr[0].x == this.bodyArr[0].y && this.bodyArr[1].x == this.bodyArr[1].y){
+									alert("死")
+					}
+				}
+				//用键盘按键的方法操作蛇的运动方向
+			Snake.prototype.anjian = function(){
+				var self = this;
+				document.onkeydown = function(){
+				 event = event||window.event
+					switch (event.keyCode){
+						case 37:
+							if(self.jian == "right"){
+								return
+							}
+							self.jian = "left";
+							break;
+						case 38:
+							if(self.jian == "down"){
+								return
+							}
+							self.jian = "top";
+							break;
+						case 39:
+							if(self.jian == "left"){
+								return
+							}
+							self.jian = "right";
+							break;
+						case 40:
+							if(self.jian == "top"){
+								return
+							}
+							self.jian = "down";
+							break;
+						default:
+						}
+					
+					}
+	
+			}
+				//长大方法更新方法
+				Snake.prototype.add = function(){
+					switch (this.jian){
+						case "right":
+						//头部添加
+						this.bodyArr.unshift({
+								x : this.bodyArr[0].x,
+								y : this.bodyArr[0].y+1
+						})
+							break;	
+						case "down":
+						this.bodyArr.unshift({
+								x : this.bodyArr[0].x+1,
+								y : this.bodyArr[0].y
+						})
+							break;
+						case "left":
+						this.bodyArr.unshift({
+								x : this.bodyArr[0].x,
+								y : this.bodyArr[0].y-1
+						})
+							break;
+						case "top":	
+						this.bodyArr.unshift({
+								x : this.bodyArr[0].x-1,
+								y : this.bodyArr[0].y
+						})
+							break;
+						default:
+					}
+					
+				}
+				//食物
+				function Food(){
+					this.l=null;
+					this.t=null;
+					this.chang();
+				}
+				//食物渲染 坐标
+				Food.prototype.render = function(){
+					tbs[this.l][this.t].className = "food";
+				}
+				//产出食物
+				Food.prototype.chang = function(){
+					this.l = parseInt(Math.random()*20);
+					this.t = parseInt(Math.random()*20);
+					for(var i = 0; i < this.bodyArr; i++){
+						if(this.bodyArr[i].x == this.l && this.bodyArr[i].y == this.t){
+							this.chang();
+							return;
+						}
+
+					}
+					
+				}
+				var food = new Food();
+				var snake =	new Snake();
+				setInterval(function(){
+					snake.hua();
+					snake.dong();	
+					food.render();
+				}
+				,200)
+		</script>
+	</body>
+</html>
