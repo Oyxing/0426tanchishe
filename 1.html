@@ -18,6 +18,7 @@
 			var tabel = document.getElementById("table");
 			var maxTap = 20;
 			var tbs = [];
+			var nums = 0;
 			for (var i = 0; i < maxTap; i++) {
 					var taTr = document.createElement("tr");
 					var thiswib = []	
@@ -30,16 +31,14 @@
 					tabel.appendChild(taTr)	
 			}
 				console.log(tbs)
-				function Snake(){
-					
-					this.q = parseInt(Math.random()*20)；
-					this.k = parseInt(Math.random()*20)；
+				function Snake(){	
+					this.q = parseInt(Math.random()*20);
+					this.k = parseInt(Math.random()*20);
 					//蛇身体坐标
 					this.bodyArr = [
 						{x:this.q,y:this.k},
 						{x:this.q,y:this.k-1},
 					];
-
 					//蛇身渲染
 					this.hua();
 					this.dong();
@@ -67,15 +66,15 @@
 					this.bodyArr.pop();//删除尾巴
 					this.add();//头部添加
 					//当食物和生的身体相撞的时候执行跳出食物和添加食物
-					if(this.bodyArr[0].x == food.l && this.bodyArr[0].y==food.t){
+					if(this.bodyArr[0].x == food.l && this.bodyArr[0].y == food.t){
 						food.chang();
 						this.add();
 					}
-					if(this.bodyArr[0] >= 19 || this.bodyArr[0].x <=0 || this.bodyArr[0].y >= 19 || this.bodyArr[0].y <=0){
-									alert("死")
-									clearInterval(time);
+					if(this.bodyArr[0].x >= 20 || this.bodyArr[0].x <= 0 || this.bodyArr[0].y >= 20 || this.bodyArr[0].y <= 0){
+						alert("sd")
+						clearInterval(time);
+						return;
 					}
-					
 				}
 				//用键盘按键的方法操作蛇的运动方向
 			Snake.prototype.anjian = function(){
@@ -108,10 +107,8 @@
 							self.jian = "down";
 							break;
 						default:
-						}
-					
 					}
-	
+				}
 			}
 				//长大方法更新方法
 				Snake.prototype.add = function(){
@@ -143,8 +140,8 @@
 							break;
 						default:
 					}
-					
 				}
+				
 				//食物
 				function Food(){
 					this.l = null;
@@ -160,17 +157,15 @@
 					this.l = parseInt(Math.random()*20);
 					this.t = parseInt(Math.random()*20);
 					for(var i = 0; i < this.bodyArr; i++){
-						if(this.bodyArr[i].x == this.l && this.bodyArr[i].y == this.t){
+						if(this.bodyArr[i].x == this.food[o].l && this.bodyArr[i].y == this.food[o].t){
 							this.chang();
 							return;
 						}
-
 					}
-					
 				}
 				var food = new Food();
 				var snake =	new Snake();
-			var time = setInterval(function(){
+			var time=setInterval(function(){
 					snake.hua();
 					snake.dong();	
 					food.render();
