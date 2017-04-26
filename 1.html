@@ -71,9 +71,11 @@
 						food.chang();
 						this.add();
 					}
-					if(this.bodyArr[0].x == this.bodyArr[0].y && this.bodyArr[1].x == this.bodyArr[1].y){
+					if(this.bodyArr[0] >= 19 || this.bodyArr[0].x <=0 || this.bodyArr[0].y >= 19 || this.bodyArr[0].y <=0){
 									alert("死")
+									clearInterval(time);
 					}
+					
 				}
 				//用键盘按键的方法操作蛇的运动方向
 			Snake.prototype.anjian = function(){
@@ -145,8 +147,8 @@
 				}
 				//食物
 				function Food(){
-					this.l=null;
-					this.t=null;
+					this.l = null;
+					this.t = null;
 					this.chang();
 				}
 				//食物渲染 坐标
@@ -168,7 +170,7 @@
 				}
 				var food = new Food();
 				var snake =	new Snake();
-				setInterval(function(){
+			var time = setInterval(function(){
 					snake.hua();
 					snake.dong();	
 					food.render();
