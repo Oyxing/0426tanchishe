@@ -8,17 +8,25 @@
 				border: 1px solid black;
 			}
 			td{width: 15px;height: 15px;}
-			.red{background-color: red;}
-			.food{background-color: yellow;}
+			.blue{background-color: blue;border-radius:50%;}
+			.red{background: rgba(250,25,0,0.5); border-radius:50%;}
+			.food{background-color: yellow;border-radius:50%;}
+			#fen{width: 80px;height: 30px;border: 2px solid red;position: absolute;margin-left: 425px;margin-top: -425px;}
 		</style>
 	</head>
 	<body>
 		<table id="table"></table>
+		<div id="fen">
+			得分:0
+		</div>
 		<script type="text/javascript">
 			var tabel = document.getElementById("table");
+			var fen = document.getElementById("fen")
 			var maxTap = 20;
 			var tbs = [];
-			var nums = 0;
+			var fennum = 0;
+			var t = 200
+			
 			for (var i = 0; i < maxTap; i++) {
 					var taTr = document.createElement("tr");
 					var thiswib = []	
@@ -27,13 +35,12 @@
 						taTr.appendChild(taTd)//把创建td的内容放到tr里
 						thiswib.push(taTd)//把创建td装到tr的数组里
 					}
-					tbs.push(thiswib)//把td,tr装到tbs的数组里
-					tabel.appendChild(taTr)	
+					tbs.push(thiswib);//把td,tr装到tbs的数组里
+					tabel.appendChild(taTr);
 			}
-				console.log(tbs)
-				function Snake(){	
-					this.q = parseInt(Math.random()*20);
-					this.k = parseInt(Math.random()*20);
+				function Snake(){
+					this.q = 8;
+					this.k = 8;
 					//蛇身体坐标
 					this.bodyArr = [
 						{x:this.q,y:this.k},
@@ -57,24 +64,44 @@
 							}	
 						}
 					//画蛇   便利的方式得到蛇的身体
+					
 					for(var i = 0; i < this.bodyArr.length; i++){
 						tbs[this.bodyArr[i].x][this.bodyArr[i].y].className = "red";
-					}	
+						tbs[this.bodyArr[0].x][this.bodyArr[0].y].className = "blue";
+						//食物不能出现在蛇身上
+						if(this.bodyArr[i].x == food.l && this.bodyArr[i].y == food.t)
+								food.chang()
+						}
 				}
-				//蛇的更新
+				//蛇的更新   运动
+
 				Snake.prototype.dong = function(){
 					this.bodyArr.pop();//删除尾巴
 					this.add();//头部添加
 					//当食物和生的身体相撞的时候执行跳出食物和添加食物
-					if(this.bodyArr[0].x == food.l && this.bodyArr[0].y == food.t){
+					if(this.bodyArr[0].x == food.l && this.bodyArr[0].y==food.t){
 						food.chang();
+						//分数
+						fennum++;
+						t -= fennum*0.8;
+						console.log(fennum)
+						console.log(t)
+						fen.innerHTML = "得分:" + fennum;	
 						this.add();
 					}
-					if(this.bodyArr[0].x >= 20 || this.bodyArr[0].x <= 0 || this.bodyArr[0].y >= 20 || this.bodyArr[0].y <= 0){
-						alert("sd")
-						clearInterval(time);
-						return;
+					//撞墙
+					if(this.bodyArr[0].x > maxTap-1 || this.bodyArr[0].y > maxTap-1 || this.bodyArr[0].x < 0 || this.bodyArr[0].y < 0){
+
+								clearInterval(time);
 					}
+					//不能撞自己
+					for (var i = 1; i < this.bodyArr.length; i++){
+						if(this.bodyArr[0].x == this.bodyArr[i].x && this.bodyArr[0].y == this.bodyArr[i].y){
+									clearInterval(time);
+
+							}
+					}
+
 				}
 				//用键盘按键的方法操作蛇的运动方向
 			Snake.prototype.anjian = function(){
@@ -107,8 +134,10 @@
 							self.jian = "down";
 							break;
 						default:
+						}
+					
 					}
-				}
+	
 			}
 				//长大方法更新方法
 				Snake.prototype.add = function(){
@@ -141,36 +170,37 @@
 						default:
 					}
 				}
-				
 				//食物
 				function Food(){
-					this.l = null;
-					this.t = null;
+					this.l=null;
+					this.t=null;
 					this.chang();
 				}
 				//食物渲染 坐标
 				Food.prototype.render = function(){
 					tbs[this.l][this.t].className = "food";
 				}
-				//产出食物
+				//创建食物
 				Food.prototype.chang = function(){
-					this.l = parseInt(Math.random()*20);
-					this.t = parseInt(Math.random()*20);
+					this.l = parseInt(Math.random()*maxTap);
+					this.t = parseInt(Math.random()*maxTap);
 					for(var i = 0; i < this.bodyArr; i++){
-						if(this.bodyArr[i].x == this.food[o].l && this.bodyArr[i].y == this.food[o].t){
+						if(this.bodyArr[i].x == this.l && this.bodyArr[i].y == this.t){	
 							this.chang();
 							return;
 						}
 					}
+					
 				}
 				var food = new Food();
 				var snake =	new Snake();
+
 			var time=setInterval(function(){
 					snake.hua();
 					snake.dong();	
 					food.render();
 				}
-				,200)
+				,t)
 		</script>
 	</body>
 </html>
